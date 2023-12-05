@@ -14,12 +14,11 @@ const SB_USER_ID = "YOUR USER ID HERE";
 const SB_TOKEN = "YOUR USER ACCESS TOKEN";
 const LIMIT = 100;
 
-function createGroupChannelCollection() {
+function createGroupChannelCollection(sb) {
     const groupChannelFilter = new GroupChannelFilter();
-    groupChannelFilter.includeEmpty = true;
+    groupChannelFilter.includeEmpty = false;
     groupChannelFilter.unreadChannelFilter = UnreadChannelFilter.ALL;
     groupChannelFilter.hiddenChannelFilter = HiddenChannelFilter.UNHIDDEN;
-    groupChannelFilter.nicknameContainsFilter = nicknameContainsFilter;
 
     const params = {
         filter: groupChannelFilter,
@@ -27,7 +26,7 @@ function createGroupChannelCollection() {
         limit: LIMIT,
     };
 
-    return this.sb.groupChannel.createGroupChannelCollection(params);
+    return sb.groupChannel.createGroupChannelCollection(params);
 }
 
 async function getChannels() {
@@ -39,7 +38,7 @@ async function getChannels() {
     });
 
     await sb.connect(SB_USER_ID, SB_TOKEN);
-    const groupChannelCollection = createGroupChannelCollection();
+    const groupChannelCollection = createGroupChannelCollection(sb);
     let result = [];
 
     while (groupChannelCollection.hasMore) {
@@ -53,6 +52,6 @@ async function getChannels() {
 const el = document.querySelector('#app');
 if (el) {
     el.innerHTML = "Loading...";
-    const channels = getChannels();
+    const channels = await getChannels();
     el.innerHTML = `Channel count received: ${channels.length}`;
 }
